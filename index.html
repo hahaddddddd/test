@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>读取腾讯文档数据</title>
+    <style>
+        body {
+            font-size: 18px;
+            padding: 30px;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div>加载中，请稍候...</div>
+
+    <script>
+        // 腾讯文档公开导出地址（你给的文档已公开可读取）
+        const url = "https://docs.qq.com/sheet/DRkZUdVhFT0N6d3BP?export=csv";
+
+        fetch(url)
+            .then(res => res.text())
+            .then(csv => {
+                // 按行拆分
+                const lines = csv.split(/\r?\n/).filter(line => line.trim() !== "");
+
+                // 你要的数据
+                // 第3行第7列 → lines[2][6]
+                // 第7行第1列 → lines[6][0]
+                const row3 = lines[2]?.split(",") || [];
+                const row7 = lines[6]?.split(",") || [];
+
+                const data1 = row3[6] || "未找到数据";
+                const data2 = row7[0] || "未找到数据";
+
+                // 输出到页面
+                document.body.innerHTML = `
+                    <p>第 3 行 第 7 列的数据：<strong>${data1}</strong></p>
+                    <p>第 7 行 第 1 列的数据：<strong>${data2}</strong></p>
+                `;
+            })
+            .catch(err => {
+                document.body.innerHTML = "读取失败：" + err.message;
+            });
+    </script>
+</body>
